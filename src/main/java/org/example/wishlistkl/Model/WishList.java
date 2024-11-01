@@ -14,8 +14,11 @@ public class WishList {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
-
     }
+
+    public WishList(){
+    }
+
     public String getUser() {
         return user;
     }
@@ -55,5 +58,18 @@ public class WishList {
         this.phoneNumber = phoneNumber;
     }
 
-    //Evt. Override toString() method.
+    @Override
+    public String toString() {
+        return "WishList{" +
+                "user='" + user + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                '}';
+    }
+
+
+    }
+
 }
