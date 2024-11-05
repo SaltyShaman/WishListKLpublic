@@ -1,15 +1,15 @@
 package org.example.wishlistkl.Model;
 
 public class User {
-    private String user;
+    private String username;
     private int id;
     private String name;
     private String email;
     private String phoneNumber;
 
 
-    public User(String user, int id, String name, String email, String phoneNumber) {
-        this.user = user;
+    public User(String username, int id, String name, String email, String phoneNumber) {
+        this.username = username;
         this.id = id;
         this.name = name;
         this.email = email;
@@ -20,11 +20,11 @@ public class User {
     }
 
     public String getUser() {
-        return user;
+        return username;
     }
 
     public void setUser(String user) {
-        this.user = user;
+        this.username = username;
     }
 
     public int getId() {
@@ -60,8 +60,8 @@ public class User {
 
     @Override
     public String toString() {
-        return "WishList{" +
-                "user='" + user + '\'' +
+        return "User{" +
+                "username='" + username + '\'' +
                 ", id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
