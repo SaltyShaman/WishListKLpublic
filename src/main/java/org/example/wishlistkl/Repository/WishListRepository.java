@@ -1,7 +1,7 @@
 package org.example.wishlistkl.Repository;
 
 import org.example.wishlistkl.Model.User;
-import org.example.wishlistkl.model.WishList
+import org.example.wishlistkl.model.WishList;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
