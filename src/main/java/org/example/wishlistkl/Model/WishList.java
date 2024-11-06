@@ -1,18 +1,34 @@
 package org.example.wishlistkl.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WishList {
 
     private String username;
     private int wishListId;
-    private String object;
+    private List<String> objects = new ArrayList<>();
 
-    public WishList(String username, int wishListId, String object) {
+    public WishList(String username, int wishListId, List<String> objects) {
         this.username = username;
         this.wishListId = wishListId;
-        this.object = object;
+        this.objects = objects;
     }
 
     public WishList() {
+    }
+
+    // addObject() should also be used in repo
+    public void addObject(String object) {
+        objects.add(object);
+    }
+
+    public List<String> getObjects() {
+        return objects;
+    }
+
+    public void setObjects(List<String> objects) {
+        this.objects = objects;
     }
 
     public String getUsername() {
@@ -31,20 +47,12 @@ public class WishList {
         this.wishListId = wishListId;
     }
 
-    public String getObject() {
-        return object;
-    }
-
-    public void setObject(String object) {
-        this.object = object;
-    }
-
     @Override
     public String toString() {
         return "WishList{" +
                 "username='" + username + '\'' +
                 ", wishListId=" + wishListId +
-                ", object='" + object + '\'' +
+                ", objects=" + objects +
                 '}';
     }
 }
