@@ -4,9 +4,7 @@ import org.example.wishlistkl.Model.User;
 import org.example.wishlistkl.model.WishList
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 @Repository
 public class WishListRepository {
@@ -41,18 +39,47 @@ public class WishListRepository {
         // 3: kontrol tjek af login med evt println
     }
 
+
     public void addWishList(WishList wishlist) throws SQLException {
+        String insertWishListSQL = "INSERT INTO wishlist (username) VALUES (?)";
+        String insertItemSQL = "INSERT INTO wishlist_items (wishlistId, object) VALUES (?, ?)";
 
-        // 1: hent username til brug med evt login
-        // 2: opret en ny ønskeliste med username og objekt(er). ID er automatisk generet
-        // objekter skal måske være arrayList der læses og smides ind i SQL
-        // objekt eller objekter skal eftertjekkes og eftertestes.
-        // tanke om hvordan man skal skaffe objekt navne?
-        // tanken er at der ikke er nogle reservede objekter på wishListen
-        // kan altid lave en ny klasse der hedder addItem
-        // 3: tilføj den til SQL med prepared statments med brug af connect()
-        // 4: brug exception handling
-        // 5: tilføj kontrol med et udprint af data tilføjet
+        try (Connection connection = connect();
+             PreparedStatement wishlistStmt = connection.prepareStatement(insertWishListSQL, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement itemStmt = connection.prepareStatement(insertItemSQL)) {
 
+            // Deactivate auto-commit for transaction management
+            connection.setAutoCommit(false);
+
+            // Insert wishlist and retrieve generated wishlistId
+            wishlistStmt.setString(1, wishlist.getUsername());
+            wishlistStmt.executeUpdate();
+
+            try (ResultSet generatedKeys = wishlistStmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int wishlistId = generatedKeys.getInt(1); // Retrieve generated wishlistId
+
+                    // Loop through objects and insert each into wishlist_items
+                    for (String object : wishlist.getObjects()) {
+                        itemStmt.setInt(1, wishlistId);
+                        itemStmt.setString(2, object);
+                        itemStmt.executeUpdate();
+                    }
+
+                    // Commit transaction if everything is successful
+                    connection.commit();
+                    System.out.println("Wishlist added successfully for user: " + wishlist.getUsername());
+                } else {
+                    throw new SQLException("Failed to insert new wishlist, no ID obtained.");
+                }
+            } catch (SQLException e) {
+                connection.rollback(); // Rollback transaction if error
+                System.err.println("Transaction rolled back due to error: " + e.getMessage());
+                throw e;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }
