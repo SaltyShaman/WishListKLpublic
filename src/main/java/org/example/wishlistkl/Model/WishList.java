@@ -18,7 +18,6 @@ public class WishList {
     public WishList() {
     }
 
-    // addObject() should also be used in repo
     public void addObject(String object) {
         objects.add(object);
     }
