@@ -36,7 +36,6 @@ public class WishList {
         this.username = username;
     }
 
-
     @Override
     public String toString() {
         return "WishList{" +
