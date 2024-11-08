@@ -2,14 +2,11 @@ package org.example.wishlistkl;
 
 import org.example.wishlistkl.Model.User;
 import org.example.wishlistkl.Repository.WishListRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.jupiter.api.AfterEach;
 import org.springframework.test.context.ActiveProfiles;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Arrays;
 
@@ -77,6 +74,11 @@ class WishListKlApplicationTests {
 
         // Call the addUser method to insert the user into the database
         wishListRepository.addUser(user);
+
+        boolean userExists = wishListRepository.userExists(user.getUser());
+        assertTrue(userExists, "Username should exist for username: " + user.getUser());
+
+
 
         // Check if the user was added by querying the database
         try (Connection conn = DriverManager.getConnection(System.getenv("url"),
