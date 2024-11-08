@@ -24,19 +24,65 @@ public class WishListRepository {
     // 3: controller klasser der returnere værdien af service metoden og evt. returnere den på en HTML side
 
     public void addUser(User user) throws SQLException {
-        // 1 : opret username med parameterne String userName, String name, String email, string phoneNumber
+
+        // 1 : oprettelse af username med parameterne String username, String name, String email, String phoneNumber
+        String query = "INSERT INTO user(username, name, email, phoneNumber) VALUES (?, ?, ?, ?)";
         // ID er automatisk generet i SQL tabellen
-        // 2 : tilføj en ny bruger til SQL med prepared statements og connect()
+
+        try (Connection conn = connect();
+             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            // 2 : tilføjer en ny bruger til SQL med prepared statements og connect()
+            stmt.setString(1, user.getUser());
+            stmt.setString(2, user.getName());
+            stmt.setString(3, user.getEmail());
+            stmt.setString(4, user.getPhoneNumber());
+            stmt.executeUpdate();
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int userId = generatedKeys.getInt(1);
+                    System.out.println("Inserted User ID: " + userId);
+                }
+            }
+
+            // 4 : Exceptions til fejl håndtering
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         // 3 : kontrol af at der ikke er en duplikat af username og email
-        // 4 : brug af exceptions til fejl håndtering
+
+
         // 5 : evt kontrol print af tilføjelsen
     }
 
-    public void getUser() throws SQLException {
+
+    public User getUser(String username) throws SQLException {
+        User user = null;
         // 1 : find et specific username med et SQL kriterie
+        String query = "SELECT * FROM user WHERE username = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+                    String phonenumber = rs.getString("phonenumber");
+
+                    user = new User(username, id, name, email, phonenumber);
+                }
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
         // 2 : returnere username
+        return user;
         // antagelse af email link til login
         // 3: kontrol tjek af login med evt println
+
     }
 
 
