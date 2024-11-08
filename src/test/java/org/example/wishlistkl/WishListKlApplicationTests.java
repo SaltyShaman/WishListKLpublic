@@ -98,8 +98,8 @@ class WishListKlApplicationTests {
 
     @Test
     void addWishList() {
-        // Create a WishList object with a placeholder wishListId (e.g., 0)
-        org.example.wishlistkl.model.WishList wishlist = new org.example.wishlistkl.model.WishList("TesterIJ", 0, Arrays.asList("item1", "item2"));
+        // Create a WishList object with only the username and objects
+        org.example.wishlistkl.model.WishList wishlist = new org.example.wishlistkl.model.WishList("TesterIJ", Arrays.asList("item1", "item2"));
 
         try {
             // Call the method to test
@@ -115,6 +115,7 @@ class WishListKlApplicationTests {
             fail("Test failed due to exception: " + e.getMessage());
         }
     }
+
 
 
 
