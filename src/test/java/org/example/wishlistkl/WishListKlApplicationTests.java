@@ -94,7 +94,7 @@ class WishListKlApplicationTests {
         }
     }
 
-/*
+
 
     @Test
     void addWishList() {
@@ -116,6 +116,6 @@ class WishListKlApplicationTests {
         }
     }
 
-*/
+
 
 }

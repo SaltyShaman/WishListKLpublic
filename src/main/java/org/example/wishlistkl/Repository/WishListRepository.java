@@ -128,4 +128,25 @@ public class WishListRepository {
             throw e;
         }
     }
+
+    public boolean wishlistExists(String username)throws SQLException {
+        String query = "SELECT 1 FROM wishlist WHERE username = ? LIMIT 1";  // check if username has a wishlist
+
+        try (Connection conn = connect();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            //username is the first parameter
+            stmt.setString(1, username);
+
+            // Execute the query
+            try (ResultSet rs = stmt.executeQuery()) {
+                // If result is found, return true
+                return rs.next();  // If result set is not empty, wishlist exists
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;  // Re-throw the exception after logging it
+        }
+    }
 }
