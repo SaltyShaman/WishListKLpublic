@@ -2,15 +2,15 @@ package org.example.wishlistkl.Model;
 
 public class User {
     private String username;
-    private int id;
+
     private String name;
     private String email;
     private String phoneNumber;
 
 
-    public User(String username, int id, String name, String email, String phoneNumber) {
+    public User(String username, String name, String email, String phoneNumber) {
         this.username = username;
-        this.id = id;
+
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -27,13 +27,9 @@ public class User {
         this.username = username;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+
+
 
     public String getName() {
         return name;
@@ -62,7 +58,6 @@ public class User {
     public String toString() {
         return "User{" +
                 "username='" + username + '\'' +
-                ", id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +

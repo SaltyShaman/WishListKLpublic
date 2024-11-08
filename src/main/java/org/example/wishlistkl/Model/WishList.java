@@ -6,12 +6,10 @@ import java.util.List;
 public class WishList {
 
     private String username;
-    private int wishListId;
     private List<String> objects = new ArrayList<>();
 
-    public WishList(String username, int wishListId, List<String> objects) {
+    public WishList(String username, List<String> objects) {
         this.username = username;
-        this.wishListId = wishListId;
         this.objects = objects;
     }
 
@@ -38,19 +36,11 @@ public class WishList {
         this.username = username;
     }
 
-    public int getWishListId() {
-        return wishListId;
-    }
-
-    public void setWishListId(int wishListId) {
-        this.wishListId = wishListId;
-    }
 
     @Override
     public String toString() {
         return "WishList{" +
                 "username='" + username + '\'' +
-                ", wishListId=" + wishListId +
                 ", objects=" + objects +
                 '}';
     }

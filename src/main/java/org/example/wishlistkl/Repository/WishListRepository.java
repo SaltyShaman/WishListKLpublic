@@ -41,7 +41,7 @@ public class WishListRepository {
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int userId = generatedKeys.getInt(1);
-                    System.out.println("Inserted User ID: " + userId);
+                    System.out.println("Inserted Username: " + user.getUser() );
                 }
             }
 
@@ -72,7 +72,7 @@ public class WishListRepository {
                     String email = rs.getString("email");
                     String phonenumber = rs.getString("phonenumber");
 
-                    user = new User(username, id, name, email, phonenumber);
+                    user = new User(username, name, email, phonenumber);
                 }
             }
         }catch (SQLException e) {

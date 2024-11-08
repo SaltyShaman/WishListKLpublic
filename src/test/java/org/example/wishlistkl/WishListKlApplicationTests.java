@@ -1,5 +1,6 @@
 package org.example.wishlistkl;
 
+import org.example.wishlistkl.Model.User;
 import org.example.wishlistkl.Repository.WishListRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,6 +70,29 @@ class WishListKlApplicationTests {
         }
     }
 
+    @Test
+    void testAddUser() throws SQLException {
+        // Create a new user instance
+        User user = new User("testUsername", "Test Name", "test@example.com", "123456789");
+
+        // Call the addUser method to insert the user into the database
+        wishListRepository.addUser(user);
+
+        // Check if the user was added by querying the database
+        try (Connection conn = DriverManager.getConnection(System.getenv("url"),
+                System.getenv("username"),
+                System.getenv("password"));
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user WHERE username = ?")) {
+
+            stmt.setString(1, user.getUser());
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Assert that the user was added to the database
+            assertTrue(resultSet.next(), "User should be present in the database.");
+            assertNotNull(resultSet.getInt("id"), "Generated ID should not be null.");
+            System.out.println("Inserted User ID: " + resultSet.getInt("id"));
+        }
+    }
 
 /*
 
