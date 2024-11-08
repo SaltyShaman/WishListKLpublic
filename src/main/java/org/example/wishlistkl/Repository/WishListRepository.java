@@ -76,7 +76,6 @@ public class WishListRepository {
 
     public User getUser(String username) throws SQLException {
         User user = null;
-        // 1 : find et specific username med et SQL kriterie
         String query = "SELECT * FROM user WHERE username = ?";
 
         try (Connection conn = connect();
@@ -85,22 +84,17 @@ public class WishListRepository {
             stmt.setString(1, username);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    int id = rs.getInt("id");
                     String name = rs.getString("name");
                     String email = rs.getString("email");
-                    String phonenumber = rs.getString("phonenumber");
+                    String phoneNumber = rs.getString("phonenumber");
 
-                    user = new User(username, name, email, phonenumber);
+                    user = new User(username, name, email, phoneNumber); // Assuming the ID is not needed directly here
                 }
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        // 2 : returnere username
         return user;
-        // antagelse af email link til login
-        // 3: kontrol tjek af login med evt println
-
     }
 
 
