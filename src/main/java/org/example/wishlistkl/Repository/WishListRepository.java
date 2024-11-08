@@ -55,6 +55,24 @@ public class WishListRepository {
         // 5 : evt kontrol print af tilføjelsen
     }
 
+    public boolean userExists(String username) throws SQLException {
+        String query = "SELECT * FROM user WHERE username = ? LIMIT 1";
+        try (Connection conn = connect();
+             PreparedStatement stmt = conn.prepareStatement(query)){
+
+            stmt.setString(1, username);
+
+            try (ResultSet rs = stmt.executeQuery()){
+                return rs.next();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw e;
+            }
+
+        }
+
+    }
+
 
     public User getUser(String username) throws SQLException {
         User user = null;
