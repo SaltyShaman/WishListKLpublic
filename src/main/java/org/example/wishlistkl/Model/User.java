@@ -2,7 +2,6 @@ package org.example.wishlistkl.Model;
 
 public class User {
     private String username;
-
     private String name;
     private String email;
     private String phoneNumber;
@@ -10,7 +9,6 @@ public class User {
 
     public User(String username, String name, String email, String phoneNumber) {
         this.username = username;
-
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -27,10 +25,6 @@ public class User {
         this.username = user;
     }
 
-
-
-
-
     public String getName() {
         return name;
     }
@@ -46,6 +40,7 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -64,7 +59,6 @@ public class User {
                 '}';
     }
 
-
-    }
+}
 
 

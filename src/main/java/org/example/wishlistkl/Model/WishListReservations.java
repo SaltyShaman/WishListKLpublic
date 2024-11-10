@@ -9,7 +9,6 @@ public class WishListReservations {
 
     public WishListReservations(String username, String email, String phoneNumber, String reservedObject) {
         this.username = username;
-
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.reservedObject = reservedObject;
