@@ -21,6 +21,8 @@ public class WishListController {
         this.wishListService = wishListService;
     }
 
+
+    //JSON endpoint
     @PostMapping
     public ResponseEntity<String> addWishList(@RequestBody org.example.wishlistkl.model.WishList wishList) {
         try {
@@ -31,4 +33,8 @@ public class WishListController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while adding wishlist: " + e.getMessage());
         }
     }
+
+
+
+
 }
