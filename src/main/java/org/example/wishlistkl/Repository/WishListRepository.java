@@ -25,33 +25,49 @@ public class WishListRepository {
     // 3: controller klasser der returnere værdien af service metoden og evt. returnere den på en HTML side
 
     public void addUser(@NotNull User user) throws SQLException {
-        // 1 : oprettelse af username med parameterne String username, String name, String email, String phoneNumber
+        // SQL query for inserting user data
         String query = "INSERT INTO user(username, name, email, phoneNumber) VALUES (?, ?, ?, ?)";
-        // ID er automatisk generet i SQL tabellen
 
+        // Initialize the connection
         Connection conn = connect();
 
-        try  {
-            PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-// se på hvordan man sender en user over med user, name, email og phoneNumber
-            // 2 : tilføjer en ny bruger til SQL med prepared statements og connect()
+        try (
+                // Prepare the statement with generated keys enabled
+                PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+        ) {
+            // Set parameters for the prepared statement
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getName());
             stmt.setString(3, user.getEmail());
             stmt.setString(4, user.getPhoneNumber());
+
+            // Execute the insert and retrieve generated keys
             stmt.executeUpdate();
-        }         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-            if (generatedKeys.next()) {
-                int id = generatedKeys.getInt(1); // Assumes ID is the first column
-                user.setId(id); // Set the generated ID in the User object
-                System.out.println("Generated User ID: " + id);
-            } else {
-                throw new SQLException("Failed to retrieve generated ID.");
+
+            // Retrieve the generated ID
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1); // Assumes ID is the first column
+                    user.setId(id); // Set the generated ID in the User object
+                    System.out.println("Generated User ID: " + id);
+                } else {
+                    throw new SQLException("Failed to retrieve generated ID.");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            // Close the connection in the finally block to ensure it gets closed
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-    } // <-- Add closing brace here
+    }
+
 
 
 

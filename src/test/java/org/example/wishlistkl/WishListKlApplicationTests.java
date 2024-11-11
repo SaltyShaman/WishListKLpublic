@@ -11,8 +11,7 @@ import java.sql.*;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Fail.fail;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @ActiveProfiles("test")
@@ -68,33 +67,36 @@ class WishListKlApplicationTests {
     }
 
     @Test
-    void testAddUser() throws SQLException { //er id fra SQL databasen problemet? TesterIan fik ID 10
+    void testAddUser() throws SQLException {
         // Create a new user instance
-        User user = new User("testUsername", "Test Name", "test@example.com", "123456789");
+        User user = new User("testUsername4", "Test Name", "test@example.com", "123456789");
 
         // Call the addUser method to insert the user into the database
         wishListRepository.addUser(user);
 
+        // Verify that the user object now contains a generated ID
+        assertNotNull(user.getId(), "Generated ID should not be null after insertion.");
+
+        // Verify that the user exists in the database
         boolean userExists = wishListRepository.userExists(user.getUsername());
-        assertTrue(userExists, "Username should exist for username: " + user.getUsername());
+        assertTrue(userExists, "User should exist for username: " + user.getUsername());
 
-
-
-        // Check if the user was added by querying the database
-        try (Connection conn = DriverManager.getConnection(System.getenv("url"),
-                System.getenv("username"),
-                System.getenv("password"));
+        // Retrieve and confirm that the user was added to the database
+        try (Connection conn = DriverManager.getConnection(
+                System.getenv("url"), System.getenv("username"), System.getenv("password"));
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user WHERE username = ?")) {
 
             stmt.setString(1, user.getUsername());
             ResultSet resultSet = stmt.executeQuery();
 
-            // Assert that the user was added to the database
+            // Assert that the user was added to the database and has a generated ID
             assertTrue(resultSet.next(), "User should be present in the database.");
-            assertNotNull(resultSet.getInt("id"), "Generated ID should not be null.");
-            System.out.println("Inserted User ID: " + resultSet.getInt("id"));
+            int dbId = resultSet.getInt("id");
+            assertEquals(user.getId(), dbId, "The ID in the User object should match the ID in the database.");
+            System.out.println("Inserted User ID: " + dbId);
         }
     }
+// 15, 16
 
 
 
