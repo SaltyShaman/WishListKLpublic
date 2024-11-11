@@ -62,7 +62,7 @@ public class WishListService {
             // Passing only the username string to the repository method
             User user = wishListRepository.getUser(username);
             if (user != null) {
-                System.out.println("User found: " + user.getUser());
+                System.out.println("User found: " + user.getUsername());
             } else {
                 System.out.println("User not found.");
             }
