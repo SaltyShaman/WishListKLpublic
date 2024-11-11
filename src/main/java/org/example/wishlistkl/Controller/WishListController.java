@@ -1,6 +1,5 @@
 package org.example.wishlistkl.Controller;
 
-
 import org.example.wishlistkl.Service.WishListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,8 +32,5 @@ public class WishListController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while adding wishlist: " + e.getMessage());
         }
     }
-
-
-
 
 }

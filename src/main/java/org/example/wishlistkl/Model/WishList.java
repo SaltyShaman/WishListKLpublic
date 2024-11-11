@@ -43,4 +43,7 @@ public class WishList {
                 ", objects=" + objects +
                 '}';
     }
+
 }
+
+

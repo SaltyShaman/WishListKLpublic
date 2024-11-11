@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create New User</title>
+</head>
+<body>
+<h1>Create New User</h1>
+
+<!-- Success message display -->
+<div th:if="${message}">
+    <p th:text="${message}" style="color:green;"></p>
+</div>
+
+<form th:action="@{/wishlists/new-user}" th:object="${user}" method="post">
+    <label for="username">Username:</label>
+    <input type="text" th:field="*{username}" required><br>
+
+    <label for="name">Name:</label>
+    <input type="text" th:field="*{name}" required><br>
+
+    <label for="email">Email:</label>
+    <input type="email" th:field="*{email}" required><br>
+
+    <label for="phoneNumber">Phone Number:</label>
+    <input type="text" th:field="*{phoneNumber}" required><br>
+
+    <button type="submit">Create User</button>
+</form>
+</body>
+</html>
