@@ -5,16 +5,27 @@ import java.util.List;
 
 public class WishList {
 
+    private Integer wishlistId;
     private String username;
     private List<String> objects = new ArrayList<>();
 
     public WishList(String username, List<String> objects) {
-        this.username = username;
-        this.objects = objects;
+        this.username = (username != null) ? username : "";
+        this.objects = (objects != null) ? objects : new ArrayList<>();
     }
+
 
     public WishList() {
     }
+
+    public Integer getWishlistId() {
+        return wishlistId;
+    }
+
+    public void setWishlistId(Integer wishlistId) {
+        this.wishlistId = wishlistId;
+    }
+
 
     public void addObject(String object) {
         objects.add(object);

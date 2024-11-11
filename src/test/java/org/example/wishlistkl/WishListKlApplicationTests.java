@@ -2,6 +2,7 @@ package org.example.wishlistkl;
 
 import org.example.wishlistkl.Model.User;
 import org.example.wishlistkl.Repository.WishListRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,8 +12,7 @@ import java.sql.*;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Fail.fail;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @ActiveProfiles("test")
@@ -68,33 +68,31 @@ class WishListKlApplicationTests {
     }
 
     @Test
-    void testAddUser() throws SQLException { //er id fra SQL databasen problemet? TesterIan fik ID 10
+    void testAddUser() throws SQLException {
         // Create a new user instance
-        User user = new User("testUsername", "Test Name", "test@example.com", "123456789");
+        User user = new User("testUsername27", "TestName", "test@example.com", "123456789");
+
+        // Print out user details to verify they are correctly initialized
+        System.out.println("Testing with User: " + user);
 
         // Call the addUser method to insert the user into the database
         wishListRepository.addUser(user);
 
+        // Verify that the user object now contains a generated ID
+        Assertions.assertNotNull(user.getId(), "Generated ID should not be null after insertion.");
+
+        // Verify that the user exists in the database using the repository method
         boolean userExists = wishListRepository.userExists(user.getUsername());
-        assertTrue(userExists, "Username should exist for username: " + user.getUsername());
+        Assertions.assertTrue(userExists, "User should exist for username: " + user.getUsername());
 
-
-
-        // Check if the user was added by querying the database
-        try (Connection conn = DriverManager.getConnection(System.getenv("url"),
-                System.getenv("username"),
-                System.getenv("password"));
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user WHERE username = ?")) {
-
-            stmt.setString(1, user.getUsername());
-            ResultSet resultSet = stmt.executeQuery();
-
-            // Assert that the user was added to the database
-            assertTrue(resultSet.next(), "User should be present in the database.");
-            assertNotNull(resultSet.getInt("id"), "Generated ID should not be null.");
-            System.out.println("Inserted User ID: " + resultSet.getInt("id"));
-        }
+        // Print the generated ID for visibility during testing
+        System.out.println("Generated User ID: " + user.getId());
+        System.out.println(user);
     }
+
+
+
+// 15, 16, 11, 13, 14 blev sprunget over grundet duplikat entry, 15, 11, 13, 14
 
 
 
@@ -118,7 +116,20 @@ class WishListKlApplicationTests {
         }
     }
 
+    @Test
+    void testGetUserByUsername() throws SQLException {
+        // Specify the username to fetch
+        String username = "testUsername16";
 
+        // Call the method to fetch the user data
+        User user = wishListRepository.getUserByUsername(username);
 
+        // Verify the user was found and the data matches
+        Assertions.assertNotNull(user, "User should not be null.");
+        Assertions.assertEquals("testUsername16", user.getUsername(), "Username should match.");
+        System.out.println("Fetched User: " + user);
+    }
 
+// kan hente nyligt indsat data der IKKE dukker op i en SQL tabl på en manuel querry
+// kan hente manuelt indsat manuelt i SQL
 }
