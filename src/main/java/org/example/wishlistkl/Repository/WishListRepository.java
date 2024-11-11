@@ -2,6 +2,7 @@ package org.example.wishlistkl.Repository;
 
 import org.example.wishlistkl.Model.User;
 import org.example.wishlistkl.model.WishList;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -23,7 +24,7 @@ public class WishListRepository {
     // 2: service der returnere repo metoderne
     // 3: controller klasser der returnere værdien af service metoden og evt. returnere den på en HTML side
 
-    public void addUser(User user) throws SQLException {
+    public void addUser(@NotNull User user) throws SQLException {
         // 1 : oprettelse af username med parameterne String username, String name, String email, String phoneNumber
         String query = "INSERT INTO user(username, name, email, phoneNumber) VALUES (?, ?, ?, ?)";
         // ID er automatisk generet i SQL tabellen
@@ -39,10 +40,17 @@ public class WishListRepository {
             stmt.setString(3, user.getEmail());
             stmt.setString(4, user.getPhoneNumber());
             stmt.executeUpdate();
+        }         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                int id = generatedKeys.getInt(1); // Assumes ID is the first column
+                user.setId(id); // Set the generated ID in the User object
+                System.out.println("Generated User ID: " + id);
+            } else {
+                throw new SQLException("Failed to retrieve generated ID.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        // 3 : kontrol af at der ikke er en duplikat af username og email
     } // <-- Add closing brace here
 
 
@@ -90,50 +98,87 @@ public class WishListRepository {
     }
 
 
-    public void addWishList(WishList wishlist) throws SQLException {
+    public void addWishList(@NotNull WishList wishlist) throws SQLException {
         String insertWishListSQL = "INSERT INTO wishlist (username) VALUES (?)";
         String insertItemSQL = "INSERT INTO wishlist_items (wishlistId, object) VALUES (?, ?)";
 
         Connection conn = connect();
 
+        // Declare the statements outside the try block
+        PreparedStatement wishlistStmt = null;
+        PreparedStatement itemStmt = null;
+        ResultSet generatedKeys = null;
+
         try {
-             PreparedStatement wishlistStmt = conn.prepareStatement(insertWishListSQL, Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement itemStmt = conn.prepareStatement(insertItemSQL)){
+            // Prepare the SQL statements
+            wishlistStmt = conn.prepareStatement(insertWishListSQL, Statement.RETURN_GENERATED_KEYS);
+            itemStmt = conn.prepareStatement(insertItemSQL);
 
-                // Deactivate auto-commit for transaction management
-                conn.setAutoCommit(false);
+            // Deactivate auto-commit for transaction management
+            conn.setAutoCommit(false);
 
-                // Insert wishlist and retrieve generated wishlistId
-                wishlistStmt.setString(1, wishlist.getUsername());
-                wishlistStmt.executeUpdate();
-            }
-            try (ResultSet generatedKeys = wishlistStmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int wishlistId = generatedKeys.getInt(1); // Retrieve generated wishlistId
+            // Insert wishlist and retrieve generated wishlistId
+            wishlistStmt.setString(1, wishlist.getUsername());
+            wishlistStmt.executeUpdate();
 
-                    // Loop through objects and insert each into wishlist_items
-                    for (String object : wishlist.getObjects()) {
-                        itemStmt.setInt(1, wishlistId);
-                        itemStmt.setString(2, object);
-                        itemStmt.executeUpdate();
-                    }
+            // Retrieve the generated wishlistId
+            generatedKeys = wishlistStmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int wishlistId = generatedKeys.getInt(1); // Retrieve generated wishlistId
 
-                    // Commit transaction if everything is successful
-                    conn.commit();
-                    System.out.println("Wishlist added successfully for user: " + wishlist.getUsername());
-                } else {
-                    throw new SQLException("Failed to insert new wishlist, no ID obtained.");
+                // Loop through objects and insert each into wishlist_items
+                for (String object : wishlist.getObjects()) {
+                    itemStmt.setInt(1, wishlistId);
+                    itemStmt.setString(2, object);
+                    itemStmt.executeUpdate();
                 }
-            } catch (SQLException e) {
-                conn.rollback(); // Rollback transaction if error
-                System.err.println("Transaction rolled back due to error: " + e.getMessage());
-                throw e;
+
+                // Commit transaction if everything is successful
+                conn.commit();
+                System.out.println("Wishlist added successfully for user: " + wishlist.getUsername());
+            } else {
+                throw new SQLException("Failed to insert new wishlist, no ID obtained.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            // Rollback transaction if any error occurs
+            if (conn != null) {
+                conn.rollback();
+            }
+            System.err.println("Transaction rolled back due to error: " + e.getMessage());
             throw e;
+        } finally {
+            // Close the ResultSet and PreparedStatements to avoid resource leaks
+            if (generatedKeys != null) {
+                try {
+                    generatedKeys.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (wishlistStmt != null) {
+                try {
+                    wishlistStmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (itemStmt != null) {
+                try {
+                    itemStmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
+
 
     public boolean wishlistExists(String username)throws SQLException {
         String query = "SELECT 1 FROM wishlist WHERE username = ? LIMIT 1";  // check if username has a wishlist

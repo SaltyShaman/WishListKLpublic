@@ -68,7 +68,7 @@ class WishListKlApplicationTests {
     }
 
     @Test
-    void testAddUser() throws SQLException {
+    void testAddUser() throws SQLException { //er id fra SQL databasen problemet? TesterIan fik ID 10
         // Create a new user instance
         User user = new User("testUsername", "Test Name", "test@example.com", "123456789");
 
