@@ -6,7 +6,6 @@ public class User {
     private String email;
     private String phoneNumber;
 
-
     public User(String username, String name, String email, String phoneNumber) {
         this.username = username;
         this.name = name;
@@ -14,15 +13,16 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public User(){
+    public User() {
     }
 
-    public String getUser() {
+    // Renamed method to getUsername()
+    public String getUsername() {
         return username;
     }
 
-    public void setUser(String user) {
-        this.username = user;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {
@@ -58,5 +58,4 @@ public class User {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 '}';
     }
-
 }

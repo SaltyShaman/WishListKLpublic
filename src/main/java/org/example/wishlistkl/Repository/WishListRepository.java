@@ -24,36 +24,28 @@ public class WishListRepository {
     // 3: controller klasser der returnere værdien af service metoden og evt. returnere den på en HTML side
 
     public void addUser(User user) throws SQLException {
-
         // 1 : oprettelse af username med parameterne String username, String name, String email, String phoneNumber
         String query = "INSERT INTO user(username, name, email, phoneNumber) VALUES (?, ?, ?, ?)";
         // ID er automatisk generet i SQL tabellen
 
-        try (Connection conn = connect();
-             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        Connection conn = connect();
+
+        try  {
+            PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+// se på hvordan man sender en user over med user, name, email og phoneNumber
             // 2 : tilføjer en ny bruger til SQL med prepared statements og connect()
-            stmt.setString(1, user.getUser());
+            stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getName());
             stmt.setString(3, user.getEmail());
             stmt.setString(4, user.getPhoneNumber());
             stmt.executeUpdate();
-
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int userId = generatedKeys.getInt(1);
-                    System.out.println("Inserted Username: " + user.getUser() );
-                }
-            }
-
-            // 4 : Exceptions til fejl håndtering
         } catch (SQLException e) {
             e.printStackTrace();
         }
         // 3 : kontrol af at der ikke er en duplikat af username og email
+    } // <-- Add closing brace here
 
 
-        // 5 : evt kontrol print af tilføjelsen
-    }
 
     public boolean userExists(String username) throws SQLException {
         String query = "SELECT * FROM user WHERE username = ? LIMIT 1";
@@ -102,17 +94,19 @@ public class WishListRepository {
         String insertWishListSQL = "INSERT INTO wishlist (username) VALUES (?)";
         String insertItemSQL = "INSERT INTO wishlist_items (wishlistId, object) VALUES (?, ?)";
 
-        try (Connection connection = connect();
-             PreparedStatement wishlistStmt = connection.prepareStatement(insertWishListSQL, Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement itemStmt = connection.prepareStatement(insertItemSQL)) {
+        Connection conn = connect();
 
-            // Deactivate auto-commit for transaction management
-            connection.setAutoCommit(false);
+        try {
+             PreparedStatement wishlistStmt = conn.prepareStatement(insertWishListSQL, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement itemStmt = conn.prepareStatement(insertItemSQL)){
 
-            // Insert wishlist and retrieve generated wishlistId
-            wishlistStmt.setString(1, wishlist.getUsername());
-            wishlistStmt.executeUpdate();
+                // Deactivate auto-commit for transaction management
+                conn.setAutoCommit(false);
 
+                // Insert wishlist and retrieve generated wishlistId
+                wishlistStmt.setString(1, wishlist.getUsername());
+                wishlistStmt.executeUpdate();
+            }
             try (ResultSet generatedKeys = wishlistStmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int wishlistId = generatedKeys.getInt(1); // Retrieve generated wishlistId
@@ -125,13 +119,13 @@ public class WishListRepository {
                     }
 
                     // Commit transaction if everything is successful
-                    connection.commit();
+                    conn.commit();
                     System.out.println("Wishlist added successfully for user: " + wishlist.getUsername());
                 } else {
                     throw new SQLException("Failed to insert new wishlist, no ID obtained.");
                 }
             } catch (SQLException e) {
-                connection.rollback(); // Rollback transaction if error
+                conn.rollback(); // Rollback transaction if error
                 System.err.println("Transaction rolled back due to error: " + e.getMessage());
                 throw e;
             }

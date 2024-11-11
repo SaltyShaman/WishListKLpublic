@@ -75,8 +75,8 @@ class WishListKlApplicationTests {
         // Call the addUser method to insert the user into the database
         wishListRepository.addUser(user);
 
-        boolean userExists = wishListRepository.userExists(user.getUser());
-        assertTrue(userExists, "Username should exist for username: " + user.getUser());
+        boolean userExists = wishListRepository.userExists(user.getUsername());
+        assertTrue(userExists, "Username should exist for username: " + user.getUsername());
 
 
 
@@ -86,7 +86,7 @@ class WishListKlApplicationTests {
                 System.getenv("password"));
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user WHERE username = ?")) {
 
-            stmt.setString(1, user.getUser());
+            stmt.setString(1, user.getUsername());
             ResultSet resultSet = stmt.executeQuery();
 
             // Assert that the user was added to the database
